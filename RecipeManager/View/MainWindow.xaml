@@ -1,0 +1,160 @@
+﻿<Window x:Class="RecipeManager.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:RecipeManager" 
+        xmlns:viewmodel="clr-namespace:RecipeManager.ViewModel" d:DataContext="{d:DesignInstance Type=viewmodel:MainWindowViewModel}"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <Grid Name="GridLogin" >
+            <TabControl>
+                <TabItem Header="Login">
+                    <Grid >
+                        <Label Content="Logowanie" FontSize="26" Margin="80,20,0,0"/>
+                        <TextBox Name="TBLogin" HorizontalAlignment="Left" Height="23" Margin="100,100,0,0" TextWrapping="Wrap" 
+                                 Text="{Binding Path=LoginViewModel.Login, Mode=TwoWay}" VerticalAlignment="Top" Width="120"/>
+                        <PasswordBox Name="TBPassword" HorizontalAlignment="Left" Height="23" Margin="100,170,0,0" 
+                                     Password="" PasswordChanged="PasswordBox_PasswordChanged" VerticalAlignment="Top" Width="120"/>
+                        <Button Content="Zaloguj" HorizontalAlignment="Left" Margin="100,210,0,0" VerticalAlignment="Top" Width="75"
+                                Command="{Binding Path= LoginViewModel.LoginCommand}"/>
+                        <Label Content="Hasło:" HorizontalAlignment="Left" Margin="100,140,0,0" VerticalAlignment="Top"/>
+                        <Label Content="Login:" HorizontalAlignment="Left" Margin="100,70,0,0" VerticalAlignment="Top"/>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="Rejestracja">
+                    <Grid>
+                        <Label Content="Rejstracja" FontSize="26" Margin="81,20,0,0.2"/>
+                        <TextBox Name="TBLoginR" HorizontalAlignment="Left" Height="23" Margin="100,100,0,0" TextWrapping="Wrap" 
+                                 Text="{Binding Path=RegistrationViewModel.Login, Mode=TwoWay}" VerticalAlignment="Top" Width="120"/>
+                        <TextBox Name="TBPasswordR" HorizontalAlignment="Left" Height="23" Margin="100,170,0,0" TextWrapping="Wrap" 
+                                 Text="{Binding Path=RegistrationViewModel.Password, Mode=TwoWay}" VerticalAlignment="Top" Width="120"/>
+                        <Button Content="Zarejestruj" Command="{Binding Path=RegistrationViewModel.RegistrationCommand}"
+                                HorizontalAlignment="Left" Margin="100,210,0,0" VerticalAlignment="Top" Width="75" />
+                        <Label Content="Hasło:" HorizontalAlignment="Left" Margin="100,140,0,0" VerticalAlignment="Top"/>
+                        <Label Content="Login:" HorizontalAlignment="Left" Margin="100,70,0,0" VerticalAlignment="Top"/>
+                    </Grid>
+                </TabItem>
+            </TabControl>
+        </Grid>
+        <Grid Name="GridAfterLogin" Visibility="Collapsed">
+            <Label Name="LabelInfo"  Content="{Binding Path=Info, Mode=TwoWay}" Margin="0,0,-0.4,0"></Label>
+            <Button Content="Wyloguj" Command="{Binding Path=UserInfoViewModel.LogoutCommand}"
+                    HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Height="20" Margin="719,0,-0.4,395" ></Button>
+            <TabControl Margin="0,30,-0.4,0">
+                <TabItem Header="Informacje o koncie">
+                    <Grid Name="GridInfo">
+                        <Button Content="Usuń konto" Command="{Binding Path=UserInfoViewModel.DeleteUserCommand}"
+                                HorizontalAlignment="Left" Margin="693,28,0,0" VerticalAlignment="Top" Width="75" />
+                        <Label Content="Zmiana hasła:" FontSize="24" HorizontalAlignment="Left" Margin="10,26,0,0" VerticalAlignment="Top"/>
+                        <Label Content="Podaj stare hasło:" HorizontalAlignment="Left" Margin="10,74,0,0" VerticalAlignment="Top"/>
+                        <Label Content="Podaj nowe haslo:" HorizontalAlignment="Left" Margin="10,133,0,0" VerticalAlignment="Top"/>
+                        <TextBox Name="TBOldPassword" HorizontalAlignment="Left" Height="23" Margin="10,105,0,0" TextWrapping="Wrap"
+                                 Text="{Binding Path=UserInfoViewModel.OldPassword, Mode=TwoWay}" VerticalAlignment="Top" Width="120"/>
+                        <TextBox Name="TBNewPassword" HorizontalAlignment="Left" Height="23" Margin="10,164,0,0" TextWrapping="Wrap" 
+                                 Text="{Binding Path=UserInfoViewModel.NewPassword, Mode=TwoWay}" VerticalAlignment="Top" Width="120"/>
+                        <Button Content="Zmień hasło" Command="{Binding Path=UserInfoViewModel.ChangePasswordCommand}"
+                                HorizontalAlignment="Left" Margin="10,204,0,0" VerticalAlignment="Top" Width="75" />
+                    </Grid>
+                </TabItem>
+                <TabItem Header="Przepisy">
+                    <Grid Name="GridPrzepisy" >
+                        <Button Content="Dodaj przepis" Command="{Binding Path=RecipeListViewModel.AddNewRecipeCommand}"
+                                HorizontalAlignment="Left" VerticalAlignment="Top" Height="23" Width="75" Margin="703,29,0,0"/>
+                        <TextBox Name="TBSearch" HorizontalAlignment="Left" Height="23" Margin="10,29,0,0" TextWrapping="Wrap"
+                                 Text="{Binding Path=RecipeListViewModel.SearchingPhrase}" VerticalAlignment="Top" Width="120"/>
+                        <Button Content="Szukaj" Command="{Binding Path=RecipeListViewModel.SearchRecipeCommand}"
+                                HorizontalAlignment="Left" VerticalAlignment="Top" Height="23" Width="75" Margin="311,29,0,0" />
+                        <ListView Name="LVRecipe" ItemsSource="{Binding Path=RecipeListViewModel.RecipesNames}"
+                                  HorizontalAlignment="Left" Height="275" Margin="10,77,0,0" VerticalAlignment="Top" Width="778">
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="Nazwa" Width="300" DisplayMemberBinding="{Binding Name}"/>
+                                    <GridViewColumn Header="opis" Width="300" DisplayMemberBinding="{Binding ShortDescription}"/>
+                                    <GridViewColumn Header="Ulubione">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <CheckBox IsChecked="{Binding IsFavorite}"
+                                                          Command="{Binding DataContext.RecipeListViewModel.AddToFavoriteCommand,RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
+                                                          CommandParameter="{Binding}"/>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                    <GridViewColumn x:Name="GVCOpen" Header="">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Button Content="otwórz"  
+                                                        Command="{Binding DataContext.RecipeListViewModel.OpenRecipeCommand,RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
+                                                        CommandParameter="{Binding Name}"/>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                    <GridViewColumn x:Name="GVCDelete" Header="">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Button  Content="usuń" 
+                                                         Command="{Binding DataContext.RecipeListViewModel.DeleteRecipeCommand,RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}" 
+                                                         CommandParameter="{Binding Name}"/>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                        <ComboBox SelectedValuePath="Content" SelectedItem="{Binding Path=RecipeListViewModel.NodeCategory}" 
+                                  ItemsSource="{Binding Path=RecipeListViewModel.CategoriesNames}" Name="CBCategories" 
+                                  HorizontalAlignment="Left" Margin="148,29,0,0" VerticalAlignment="Top" Width="120" Height="22"/>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="Lista zakupów">
+                    <Grid Name="GridListaZakupów">
+                        <Label Content="Nazwa produktu:" HorizontalAlignment="Left" Margin="10,11,0,0" VerticalAlignment="Top"/>
+                        <Label Content="Ilość:" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top"/>
+                        <TextBox Name="TBProduct" HorizontalAlignment="Left" Height="23" Margin="111,14,0,0" TextWrapping="Wrap"
+                                 Text="{Binding Path=ShoppingListModelView.Name, Mode=TwoWay}" VerticalAlignment="Top" Width="120"/>
+                        <TextBox Name="TBProductQuantity" HorizontalAlignment="Left" Height="23" Margin="111,44,0,0" TextWrapping="Wrap"
+                                 Text="{Binding Path=ShoppingListModelView.Quantity, Mode=TwoWay}" VerticalAlignment="Top" Width="120"/>
+                        <Button Content="Dodaj produkt" Command="{Binding Path=ShoppingListModelView.AddProductCommand}"  
+                                HorizontalAlignment="Left" VerticalAlignment="Top" Height="23" Width="92" Margin="251,44,0,0"/>
+                        <Button Content="Usuń wszystkie produkty z listy" Command="{Binding Path=ShoppingListModelView.DeleteAllProductsCommand}"
+                                HorizontalAlignment="Left" VerticalAlignment="Top" Height="23" Width="175" Margin="603,44,0,0"/>
+                        <ListView Name="LVShopingList" ItemsSource="{Binding Path=ShoppingListModelView.Products}"  HorizontalAlignment="Left" Height="275" Margin="10,77,0,0" VerticalAlignment="Top" Width="500">
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="Nazwa" Width="300" DisplayMemberBinding="{Binding Name}"/>
+                                    <GridViewColumn Header="Ilość" Width="120">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Grid>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <Button Content="+" 
+                                                                Command="{Binding DataContext.ShoppingListModelView.AddQuantityCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}" 
+                                                                CommandParameter="{Binding Path=Id}"   Width="25"/>
+                                                        <TextBox Text="{Binding Quantity}" IsReadOnly="True" Width="50" />
+                                                        <Button Content="-"
+                                                                Command="{Binding DataContext.ShoppingListModelView.SubtractQuantityCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
+                                                                CommandParameter="{Binding Path=Id}"   Width="25"/>
+                                                    </StackPanel>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                    <GridViewColumn Header="">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Button Content="usuń"
+                                                        Command="{Binding Path=DataContext.ShoppingListModelView.DeleteProductCommand,RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
+                                                        CommandParameter="{Binding Path=Id}"/>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                    </Grid>
+                </TabItem>
+            </TabControl>
+        </Grid>
+    </Grid>
+</Window>
